@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="analizadorAscendente">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/analizadorAscendente.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
