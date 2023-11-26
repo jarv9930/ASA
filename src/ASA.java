@@ -67,9 +67,9 @@ public class ASA implements Parser {
     public ASA(List<Token> tokens) {
         this.tokens = tokens;
         preanalisis = this.tokens.get(i);
-        TablaASA.configurarProducciones(numeroAProduccion, longitudProduccionPorNumero);
-        TablaASA.configurarAcciones(accion);
-        TablaASA.configurarIrA(ir_a);
+        TablaASA.Producciones(numeroAProduccion, longitudProduccionPorNumero);
+        TablaASA.Acciones(accion);
+        TablaASA.Ir_A(ir_a);
         //TABLA DE ACCIONES
         pilaEstados.push(0);
         numeroAProduccion.put(1, "Q");
