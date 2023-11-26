@@ -1,9 +1,7 @@
-import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
-
-public class ConfiguradorASA {
+public class TablaASA {
+    //Acciones de desplazamiento(s) y reduccion(r)
     public static void configurarAcciones(Map<ASA.TableKey, String> accion) {
         accion.put(new ASA.TableKey(0, TipoToken.SELECT), "s2");
         accion.put(new ASA.TableKey(1, TipoToken.EOF), "acc");
@@ -45,7 +43,7 @@ public class ConfiguradorASA {
         accion.put(new ASA.TableKey(25, TipoToken.FROM), "r10");
         accion.put(new ASA.TableKey(25, TipoToken.COMA), "r10");
     }
-
+    //Estados
     public static void configurarIrA(Map<ASA.TableKey2, Integer> ir_a) {
         ir_a.put(new ASA.TableKey2(0, "Q"), 1);
         ir_a.put(new ASA.TableKey2(2, "D"), 3);
@@ -66,7 +64,7 @@ public class ConfiguradorASA {
         ir_a.put(new ASA.TableKey2(21, "A"), 22);
         ir_a.put(new ASA.TableKey2(21, "A2"), 17);
     }
-
+    //Longitud de la produccion a reducir
     public static void configurarProducciones(Map<Integer, String> numeroAProduccion, Map<Integer, Integer> longitudProduccionPorNumero) {
         longitudProduccionPorNumero.put(1, 4);
         longitudProduccionPorNumero.put(2, 2);

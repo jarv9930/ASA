@@ -25,7 +25,7 @@ public class ASA implements Parser {
             return state == tableKey.state && token == tableKey.token;
         }
         @Override
-        public int hashCode() {
+        public int hashCode() {//devuelve una representación entera del código hash del objeto.
             int result = Integer.hashCode(state);
             result = 31 * result + (token != null ? token.hashCode() : 0);
             return result;
@@ -47,7 +47,7 @@ public class ASA implements Parser {
             return state == tableKey2.state && noTerminal.equals(tableKey2.noTerminal);
         }
         @Override
-        public int hashCode() {
+        public int hashCode() {//devuelve una representación entera del código hash del objeto.
             int result = Integer.hashCode(state);
             result = 31 * result + (noTerminal != null ? noTerminal.hashCode() : 0);
             return result;
@@ -61,17 +61,15 @@ public class ASA implements Parser {
     private final Stack<Integer> pilaEstados = new Stack<>();
     private final Map<TableKey, String> accion = new HashMap<>();
     private final Map<TableKey2, Integer> ir_a = new HashMap<>();
-    private final Map<String, List<Integer>> producciones = new HashMap<>();
     private Map<Integer, String> numeroAProduccion = new HashMap<>();
     private Map<Integer, Integer> longitudProduccionPorNumero = new HashMap<>();
-    private final Set<String> produccionesEpsilon = new HashSet<>(Arrays.asList("A1", "A3", "T1", "T3"));
 
     public ASA(List<Token> tokens) {
         this.tokens = tokens;
         preanalisis = this.tokens.get(i);
-        ConfiguradorASA.configurarProducciones(numeroAProduccion, longitudProduccionPorNumero);
-        ConfiguradorASA.configurarAcciones(accion);
-        ConfiguradorASA.configurarIrA(ir_a);
+        TablaASA.configurarProducciones(numeroAProduccion, longitudProduccionPorNumero);
+        TablaASA.configurarAcciones(accion);
+        TablaASA.configurarIrA(ir_a);
         //TABLA DE ACCIONES
         pilaEstados.push(0);
         numeroAProduccion.put(1, "Q");
@@ -93,19 +91,29 @@ public class ASA implements Parser {
         numeroAProduccion.put(17, "T3");
     }
 
-
-
-
-
-
-
-    private void agregarProduccion(String noTerminal, int... longitudes) {
-        List<Integer> listaLongitudes = producciones.computeIfAbsent(noTerminal, k -> new ArrayList<>());
-        for (int longitud : longitudes) {
-            listaLongitudes.add(longitud);
+    @Override
+    public boolean parse() {
+        while (true) {
+            int estadoActual = pilaEstados.peek();
+            TableKey tk = new TableKey(estadoActual, preanalisis.tipo);
+            String accionActual = accion.get(tk);
+            if (accionActual == null) {
+                System.out.println("Sintaxis de la cadena no aceptada, realizar chequeo de errores");
+                return false;
+            } else if ("acc".equals(accionActual)) {//[Q'->Q , $]==cadena valida
+                System.out.println("La cadena ingrezada se analizo correctamente :).");
+                return true;
+            } else if (accionActual.startsWith("s")) {//[A->α°aB, b , a] pertenece a Ii && Ir_A(Ii , a)==Ij Desplazamiento()
+                if (!desplazar(accionActual)) {
+                    return false;
+                }
+            } else if (accionActual.startsWith("r")) {//[A->α° , a] pertenece a Ii && A != S Reduccion()
+                if (!reducir(accionActual)) {
+                    return false;
+                }
+            }
         }
     }
-
     private boolean desplazar(String action) {
         String nextStateStr = action.substring(1);
         try {
@@ -143,32 +151,6 @@ public class ASA implements Parser {
         
         return true;
     }
-    // Esta función debe determinar si una producción va a épsilon.
-    private boolean esProduccionEpsilon(String noTerminal) {
-        return produccionesEpsilon.contains(noTerminal);
-    }
 
-    @Override
-    public boolean parse() {
-        while (true) {
-            int estadoActual = pilaEstados.peek();
-            TableKey tk = new TableKey(estadoActual, preanalisis.tipo);
-            String accionActual = accion.get(tk);
-            if (accionActual == null) {
-                System.out.println("Error de sintaxis, la cadena no es correcta");
-                return false;
-            } else if ("acc".equals(accionActual)) {
-                System.out.println("La cadena es correcta.");
-                return true;
-            } else if (accionActual.startsWith("s")) {
-                if (!desplazar(accionActual)) {
-                    return false;
-                }
-            } else if (accionActual.startsWith("r")) {
-                if (!reducir(accionActual)) {
-                    return false;
-                }
-            }
-        }
-    }
+
 }
